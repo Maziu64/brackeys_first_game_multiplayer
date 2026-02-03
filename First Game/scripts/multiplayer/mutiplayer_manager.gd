@@ -25,7 +25,6 @@ func become_host():
 	multiplayer.multiplayer_peer = server_peer
 	
 
-
 func join_as_player_2():
 	print("Player 2 joining")
 	
