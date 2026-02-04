@@ -9,10 +9,14 @@ var _players_spawn_node
 
 func _ready() -> void:
 	print("ready")
-	multiplayer.peer_connected.connect(_on_player_add_to_game)
-	multiplayer.peer_disconnected.connect(_on_player_deleted)
+	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
+	'''
+	javi me dijo que quizas deberia de poner esto aqui:
+	multiplayer.peer_connected.connect(_on_player_add_to_game)
+	multiplayer.peer_disconnected.connect(_on_player_deleted)
+	'''
 
 func become_host():
 	print("Starting host!")
@@ -24,6 +28,12 @@ func become_host():
 	
 	multiplayer.multiplayer_peer = server_peer
 	
+	multiplayer.peer_connected.connect(_on_player_add_to_game)
+	multiplayer.peer_disconnected.connect(_on_player_deleted)
+	
+	_on_remove_single_player()
+	
+	_on_player_add_to_game(1) #Añade personaje con id 1 cuando activa el host
 
 func join_as_player_2():
 	print("Player 2 joining")
@@ -35,6 +45,8 @@ func join_as_player_2():
 		print("Error %d" % status)
 	
 	multiplayer.multiplayer_peer = client_peer
+	
+	_on_remove_single_player()
 
 func _on_player_add_to_game(id: int):
 	print("Player %s joined the game!" % id)
@@ -47,6 +59,14 @@ func _on_player_add_to_game(id: int):
 	
 func _on_player_deleted(id: int):
 	print("Player %s left the game!" % id)
+	if not _players_spawn_node.has_node(str(id)):
+		return
+	_players_spawn_node.get_node(str(id)).queue_free()
+
+func _on_remove_single_player():
+	print("Remove single player")
+	var player_to_remove = get_tree().get_current_scene().get_node("Player")
+	player_to_remove.queue_free()
 
 func _on_connected_to_server():
 	print("heeeey")

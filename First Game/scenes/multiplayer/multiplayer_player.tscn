@@ -1,7 +1,21 @@
-[gd_scene load_steps=26 format=3 uid="uid://gadi1h864047"]
+[gd_scene format=3 uid="uid://gadi1h864047"]
 
 [ext_resource type="Script" uid="uid://dxgdrqa4uhcro" path="res://scripts/multiplayer/multiplayer_controller.gd" id="1_if3sj"]
 [ext_resource type="Texture2D" uid="uid://ylmj1655ilb1" path="res://assets/sprites/knight.png" id="2_g07kt"]
+[ext_resource type="Script" uid="uid://bovuc5rqj8bnw" path="res://scripts/multiplayer/multiplayer_input.gd" id="3_g07kt"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cdnp6"]
+properties/0/path = NodePath("InputSynchronizer:input_direction")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_g07kt"]
+properties/0/path = NodePath(".:player_id")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
 atlas = ExtResource("2_g07kt")
@@ -171,20 +185,28 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_tpwu6"]
 radius = 6.0
 
-[node name="MultiplayerPlayer" type="CharacterBody2D"]
+[node name="MultiplayerPlayer" type="CharacterBody2D" unique_id=1480661007]
 script = ExtResource("1_if3sj")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=2092300217]
+unique_name_in_owner = true
+replication_config = SubResource("SceneReplicationConfig_cdnp6")
+script = ExtResource("3_g07kt")
+
+[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=162202888]
+replication_config = SubResource("SceneReplicationConfig_g07kt")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1622867110]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_cdnp6")
 animation = &"jumping"
 autoplay = "idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1594667370]
 position = Vector2(0, -6)
 shape = SubResource("CircleShape2D_tpwu6")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1394336479]
 position = Vector2(0, -6)
 zoom = Vector2(4, 4)
 limit_left = -160
