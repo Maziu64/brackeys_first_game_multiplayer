@@ -8,10 +8,13 @@ const JUMP_VELOCITY = -300.0
 
 var direction = 1
 
-@export var player_id := 1:
-	set(id):
-		player_id = id
-		%InputSynchronizer.set_multiplayer_authority(id)
+@export var player_id := 1#:
+	#set(id):
+		#player_id = id
+		#%InputSynchronizer.set_multiplayer_authority(id)
+
+func _enter_tree() -> void:
+	%InputSynchronizer.set_multiplayer_authority(name.to_int())
 
 func _apply_animations(delta):
 	#Flip the sprite
