@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bcn2af4i6vbpl" path="res://scenes/killzone.tscn" id="5_iywne"]
 [ext_resource type="PackedScene" uid="uid://ba6sh8hh14cv8" path="res://scenes/slime.tscn" id="6_p57ef"]
 [ext_resource type="FontFile" uid="uid://cdwyvbfq6ptbq" path="res://assets/fonts/PixelOperator8.ttf" id="7_u5sy4"]
+[ext_resource type="Script" uid="uid://4noxm8t3cigc" path="res://scripts/multiplayer/finish_line.gd" id="10_vtaks"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iywne"]
 texture = ExtResource("2_yqjtg")
@@ -391,6 +392,8 @@ _data = {
 &"RESET": SubResource("Animation_lbhrr")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kvpfn"]
+
 [node name="Game" type="Node2D" unique_id=1251878260]
 
 [node name="GameManager" type="Node" parent="." unique_id=376746256]
@@ -460,15 +463,17 @@ position = Vector2(368, -59)
 
 [node name="Platforms" type="Node" parent="." unique_id=1922874646]
 
-[node name="Platform" parent="Platforms" unique_id=2007557101 instance=ExtResource("2_lnu2h")]
+[node name="Platform" parent="Platforms" unique_id=2007557101 node_paths=PackedStringArray("animation_player_optional") instance=ExtResource("2_lnu2h")]
 position = Vector2(89, -63)
+animation_player_optional = NodePath("AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Platforms/Platform" unique_id=1387948271]
 libraries/ = SubResource("AnimationLibrary_u5sy4")
 autoplay = &"Up_Down"
 
-[node name="Platform2" parent="Platforms" unique_id=2056320281 instance=ExtResource("2_lnu2h")]
+[node name="Platform2" parent="Platforms" unique_id=2056320281 node_paths=PackedStringArray("animation_player_optional") instance=ExtResource("2_lnu2h")]
 position = Vector2(321, -58)
+animation_player_optional = NodePath("AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Platforms/Platform2" unique_id=636071782]
 libraries/ = SubResource("AnimationLibrary_iywne")
@@ -546,5 +551,14 @@ spawn_limit = 2
 
 [node name="Players" type="Node2D" parent="." unique_id=1663567394]
 
+[node name="FinishLine" type="Area2D" parent="." unique_id=1377314461]
+collision_mask = 2
+script = ExtResource("10_vtaks")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FinishLine" unique_id=365684447]
+position = Vector2(505, -59)
+shape = SubResource("RectangleShape2D_kvpfn")
+
 [connection signal="pressed" from="MultiplayerHUD/Panel/VBoxContainer/Host" to="GameManager" method="become_host"]
 [connection signal="pressed" from="MultiplayerHUD/Panel/VBoxContainer/JoinAsPlayer2" to="GameManager" method="join_as_player_2"]
+[connection signal="body_entered" from="FinishLine" to="FinishLine" method="_on_body_entered"]

@@ -16,6 +16,15 @@ properties/0/replication_mode = 1
 properties/1/path = NodePath(".:position")
 properties/1/spawn = true
 properties/1/replication_mode = 1
+properties/2/path = NodePath(".:do_jump")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:_is_on_floor")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath(".:direction")
+properties/4/spawn = true
+properties/4/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
 atlas = ExtResource("2_g07kt")
@@ -186,6 +195,7 @@ animations = [{
 radius = 6.0
 
 [node name="MultiplayerPlayer" type="CharacterBody2D" unique_id=1480661007]
+collision_layer = 2
 script = ExtResource("1_if3sj")
 
 [node name="InputSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=2092300217]
@@ -212,3 +222,9 @@ zoom = Vector2(4, 4)
 limit_left = -160
 limit_bottom = 120
 position_smoothing_enabled = true
+
+[node name="RespawnTimer" type="Timer" parent="." unique_id=155360526]
+wait_time = 0.6
+one_shot = true
+
+[connection signal="timeout" from="RespawnTimer" to="." method="_respawn"]

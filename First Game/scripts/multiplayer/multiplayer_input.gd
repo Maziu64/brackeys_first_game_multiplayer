@@ -1,5 +1,7 @@
 extends MultiplayerSynchronizer
 
+@onready var player = $".."
+
 var input_direction
 
 # Called when the node enters the scene tree for the first time.
@@ -18,7 +20,13 @@ func _physics_process(delta: float) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if Input.is_action_just_pressed("jump"):
+		jump.rpc() 
+
+@rpc("call_local")
+func jump():
+	if multiplayer.is_server():
+		player.do_jump = true
 
 func prueba():
 	var prueba = multiplayer.get_unique_id()

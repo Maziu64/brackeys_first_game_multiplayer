@@ -6,6 +6,9 @@ const SERVER_IP = "127.0.0.1"
 var multiplayer_scene = preload("res://scenes/multiplayer/multiplayer_player.tscn")
 
 var _players_spawn_node
+var host_mode_enabled = false
+var multiplayer_mode_enabled = false
+var respawn_point = Vector2(40, 30)
 
 func _ready() -> void:
 	print("ready")
@@ -23,6 +26,9 @@ func become_host():
 	
 	_players_spawn_node = get_tree().get_current_scene().get_node("Players")
 	
+	multiplayer_mode_enabled = true
+	host_mode_enabled = true
+	
 	var server_peer = ENetMultiplayerPeer.new()
 	server_peer.create_server(SERVER_PORT)
 	
@@ -37,6 +43,7 @@ func become_host():
 
 func join_as_player_2():
 	print("Player 2 joining")
+	multiplayer_mode_enabled = true
 	
 	var client_peer = ENetMultiplayerPeer.new()
 	var status = client_peer.create_client(SERVER_IP, SERVER_PORT)

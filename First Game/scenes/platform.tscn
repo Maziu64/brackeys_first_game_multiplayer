@@ -1,18 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://byytqrovsvasi"]
+[gd_scene format=3 uid="uid://byytqrovsvasi"]
 
 [ext_resource type="Texture2D" uid="uid://1xgand22crp6" path="res://assets/sprites/platforms.png" id="1_ba0x2"]
+[ext_resource type="Script" uid="uid://hrdhfg7qga68" path="res://scripts/multiplayer/platform.gd" id="1_nlgqw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nlgqw"]
 size = Vector2(32, 9)
 
-[node name="Platform" type="AnimatableBody2D"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_507ja"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Platform" type="AnimatableBody2D" unique_id=1066685450]
+script = ExtResource("1_nlgqw")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1926149591]
 texture = ExtResource("1_ba0x2")
 region_enabled = true
 region_rect = Rect2(15, 0, 33, 10)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=603382119]
 position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_nlgqw")
 one_way_collision = true
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=807480117]
+replication_config = SubResource("SceneReplicationConfig_507ja")

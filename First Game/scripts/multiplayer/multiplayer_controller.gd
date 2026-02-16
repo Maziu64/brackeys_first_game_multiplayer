@@ -2,11 +2,16 @@ extends CharacterBody2D
 
 #tutorial: https://www.youtube.com/watch?v=V4a_J38XdHk
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var camera_2d: Camera2D = $Camera2D
 
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
 
 var direction = 1
+
+var do_jump = false
+var _is_on_floor = true
+var alive = true
 
 @export var player_id := 1#:
 	#set(id):
@@ -16,6 +21,12 @@ var direction = 1
 func _enter_tree() -> void:
 	%InputSynchronizer.set_multiplayer_authority(name.to_int())
 
+func _ready() -> void:
+	if multiplayer.get_unique_id() == player_id:
+		camera_2d.make_current()
+	else:
+		camera_2d.enabled = false
+
 func _apply_animations(delta):
 	#Flip the sprite
 	if direction > 0:
@@ -24,7 +35,7 @@ func _apply_animations(delta):
 		animated_sprite_2d.flip_h = true
 	
 	#Play animations
-	if is_on_floor():
+	if _is_on_floor:
 		if direction == 0:
 			animated_sprite_2d.play("idle")
 		else:
@@ -38,8 +49,9 @@ func _apply_movement_from_input(delta):
 		velocity += get_gravity() * delta
 
 	# Handle jump.
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	if do_jump and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		do_jump = false
 
 	#Get the input directio: -1, 0, 1
 	direction = %InputSynchronizer.input_direction
@@ -55,4 +67,27 @@ func _apply_movement_from_input(delta):
 
 func _physics_process(delta: float) -> void:
 	if multiplayer.is_server():
+		if not alive && is_on_floor():
+			_set_alive()
+		
+		_is_on_floor = is_on_floor()
 		_apply_movement_from_input(delta)
+	
+	if not multiplayer.is_server() || MultiplayerManager.host_mode_enabled:
+		_apply_animations(delta)
+
+func mark_dead():
+	print("Mark player dead!")
+	alive = false
+	$CollisionShape2D.set_deferred("disable", true)
+	$RespawnTimer.start()
+
+func _respawn():
+	print("Respawned!")
+	position = MultiplayerManager.respawn_point
+	$CollisionShape2D.set_deferred("disable", true)
+	
+func _set_alive():
+	print("alive again!")
+	alive = true
+	Engine.time_scale = 1.0
